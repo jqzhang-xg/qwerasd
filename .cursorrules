@@ -4,3 +4,8 @@
 - 會上架在 npm
 - 必須有詳細的 tpye 定義與 jsdoc 提示
 - 包管理工具使用 pnpm
+
+專案在 packages/qwerasd,
+外層這個則是用來測試打包後的結果
+把 qwerasd 使用 pnpm workspace 的方式引入到 main 中
+來進行測試

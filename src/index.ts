@@ -24,8 +24,45 @@ const detector = {
     }
     return false;
   },
-  qwerty(str: string, incluedReversed: boolean = false) {
-    return this.inRow(str, "qwerty", incluedReversed);
+  inColumn(
+    str: string,
+    tableName: keyof typeof table,
+    incluedReversed: boolean = false
+  ) {
+    let columns: { [key: number]: string } = {};
+    let combined = "";
+
+    for (const row of table[tableName]) {
+      for (const [index, char] of row.split("").entries()) {
+        columns[index] = (columns[index] ?? "") + char;
+      }
+    }
+
+    combined = Object.values(columns).join("");
+
+    if (combined.includes(str)) {
+      return true;
+    }
+    if (incluedReversed) {
+      if (combined.includes(str.split("").reverse().join(""))) {
+        return true;
+      }
+    }
+    return false;
+  },
+  qwerty(
+    str: string,
+    incluedReversed: boolean = false,
+    includeVertical: boolean = false
+  ) {
+    const rowResult = this.inRow(str, "qwerty", incluedReversed);
+
+    if (includeVertical) {
+      const columnResult = this.inColumn(str, "qwerty", incluedReversed);
+      return rowResult || columnResult;
+    }
+
+    return rowResult;
   },
   uppercase(str: string, incluedReversed: boolean = false) {
     return this.inRow(str, "uppercase", incluedReversed);
@@ -36,6 +73,60 @@ const detector = {
   number(str: string, incluedReversed: boolean = false) {
     return this.inRow(str, "number", incluedReversed);
   },
+};
+
+/**
+ * 判斷是否為 QWERTY 鍵盤連續字
+ * @param str 字串
+ * @param incluedReversed 是否包含反向檢查
+ * @param includeVertical 是否包含垂直檢查
+ * @returns 是否為 QWERTY 鍵盤連續字
+ */
+export const isQwerty: typeof detector.qwerty = (
+  str: string,
+  incluedReversed: boolean = false,
+  includeVertical: boolean = false
+) => {
+  return detector.qwerty(str, incluedReversed, includeVertical);
+};
+
+/**
+ * 判斷是否為大寫字母連續字
+ * @param str 字串
+ * @param incluedReversed 是否包含反向檢查
+ * @returns 是否為大寫字母連續字
+ */
+export const isUppercase: typeof detector.uppercase = (
+  str: string,
+  incluedReversed: boolean = false
+) => {
+  return detector.uppercase(str, incluedReversed);
+};
+
+/**
+ * 判斷是否為小寫字母連續字
+ * @param str 字串
+ * @param incluedReversed 是否包含反向檢查
+ * @returns 是否為小寫字母連續字
+ */
+export const isLowercase: typeof detector.lowercase = (
+  str: string,
+  incluedReversed: boolean = false
+) => {
+  return detector.lowercase(str, incluedReversed);
+};
+
+/**
+ * 判斷是否為數字連續字
+ * @param str 字串
+ * @param incluedReversed 是否包含反向檢查
+ * @returns 是否為數字連續字
+ */
+export const isNumber: typeof detector.number = (
+  str: string,
+  incluedReversed: boolean = false
+) => {
+  return detector.number(str, incluedReversed);
 };
 
 /**
@@ -78,7 +169,11 @@ class QwertyDetector {
    * @param incluedReversed 是否包含反向檢查
    * @returns 檢測結果對象
    */
-  detect(str: string | number, incluedReversed: boolean = false) {
+  detect(
+    str: string | number,
+    incluedReversed: boolean = false,
+    includeVertical: boolean = false
+  ) {
     // 重置結果
     this.results = {
       isQwerty: false,
@@ -98,7 +193,7 @@ class QwertyDetector {
       return this;
     }
 
-    if (detector.qwerty(str, incluedReversed)) {
+    if (detector.qwerty(str, incluedReversed, includeVertical)) {
       this.results.isQwerty = true;
     }
 

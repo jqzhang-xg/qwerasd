@@ -1,8 +1,26 @@
+/**
+ * 鍵盤字符表
+ */
 export declare const table: {
+    /**
+     * QWERTY 鍵盤字符表
+     */
     qwerty: string[];
+    /**
+     * 大寫字母字符表
+     */
     uppercase: string[];
+    /**
+     * 小寫字母字符表
+     */
     lowercase: string[];
+    /**
+     * 數字字符表
+     */
     number: string[];
+    /**
+     * 符號字符表
+     */
     symbol: string[];
 };
 declare const detector: {
@@ -59,10 +77,15 @@ export interface DetectResult {
 }
 /**
  * 鍵盤連續字檢測器
+ * @param length 檢測的最小長度
  */
 declare class QwertyDetector {
     results: DetectResult;
     private length;
+    /**
+     * 鍵盤連續字檢測器
+     * @param length 檢測的最小長度
+     */
     constructor(length: number);
     /**
      * 判斷是否為鍵盤連續字
@@ -76,10 +99,30 @@ declare class QwertyDetector {
      * @returns 是否為鍵盤連續字
      */
     isConsecutive(): boolean;
+    /**
+     * 判斷是否為 QWERTY 鍵盤連續字
+     * @returns 是否為 QWERTY 鍵盤連續字
+     */
     isQwerty(): boolean;
+    /**
+     * 判斷是否為大寫字母連續字
+     * @returns 是否為大寫字母連續字
+     */
     isUppercase(): boolean;
+    /**
+     * 判斷是否為小寫字母連續字
+     * @returns 是否為小寫字母連續字
+     */
     isLowercase(): boolean;
+    /**
+     * 判斷是否為數字連續字
+     * @returns 是否為數字連續字
+     */
     isNumber(): boolean;
+    /**
+     * 獲取檢測結果
+     * @returns 檢測結果
+     */
     getResults(): DetectResult;
     /**
      * 字符串轉型方法

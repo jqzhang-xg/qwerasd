@@ -1,23 +1,49 @@
 {
   "name": "qwerasd",
   "version": "1.0.0",
-  "description": "鍵盤連續字檢測工具",
+  "description": "A TypeScript library for detecting consecutive keyboard characters (qwerty patterns, numbers, letters). Perfect for password strength validation.",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
+  "files": [
+    "dist",
+    "README.md",
+    "LICENSE"
+  ],
   "scripts": {
     "build": "tsc",
     "test": "jest",
     "test:watch": "jest --watch",
-    "test:coverage": "jest --coverage"
+    "test:coverage": "jest --coverage",
+    "prepublishOnly": "npm run build && npm test",
+    "prepack": "npm run build"
   },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/jqzhang-xg/qwerasd.git"
+  },
+  "bugs": {
+    "url": "https://github.com/jqzhang-xg/qwerasd/issues"
+  },
+  "homepage": "https://github.com/jqzhang-xg/qwerasd#readme",
   "keywords": [
     "keyboard",
     "consecutive",
     "qwerty",
-    "detection"
+    "detection",
+    "password",
+    "validation",
+    "security",
+    "patterns",
+    "typescript",
+    "sequence",
+    "weak-password",
+    "character-analysis"
   ],
-  "author": "",
+  "author": "jqzhang-xg",
   "license": "ISC",
+  "engines": {
+    "node": ">=14.0.0"
+  },
   "devDependencies": {
     "@types/jest": "^29.5.5",
     "jest": "^29.7.0",

@@ -1,9 +1,21 @@
 {
   "name": "qwerasd",
-  "version": "1.0.0",
+  "version": "1.1.0",
   "description": "A TypeScript library for detecting consecutive keyboard characters (qwerty patterns, numbers, letters). Perfect for password strength validation.",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js",
+      "require": "./dist/index.js"
+    },
+    "./utils": {
+      "types": "./dist/utils.d.ts",
+      "import": "./dist/utils.js",
+      "require": "./dist/utils.js"
+    }
+  },
   "files": [
     "dist",
     "README.md",

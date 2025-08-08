@@ -1,159 +1,135 @@
 # qwerasd
 
-鍵盤連續字檢測工具（TypeScript）。支援 QWERTY 水平/垂直連續字偵測、反向檢測、大寫/小寫/數字連續字，並提供完整的型別與 JSDoc 提示。可用於密碼強度檢測等情境。
+🎯 檢測鍵盤連續字的 TypeScript 工具包
 
-## 特性
+可以檢測 `qwe`、`123`、`abc` 等連續字，適用於密碼強度驗證、表單驗證等場景。
 
-- 支援 QWERTY 水平與垂直連續字
-- 支援反向檢測（例如 `ewq`, `zaq`）
-- 支援大寫、小寫、數字連續字
-- 最小長度門檻設定（`useQwerty(length)`）
-- 友好的型別定義與 JSDoc
-- 轉型調用（toString / valueOf / toJSON）
+## ✨ 功能特色
 
-## 安裝
+- 檢測 QWERTY 鍵盤連續字：`qwe`、`asd`、`zxc`
+- 檢測垂直連續字：`qaz`、`wsx`、`edc`
+- 檢測反向連續字：`ewq`、`tsr`、`cba`
+- 檢測數字連續字：`123`、`456`、`789`
+- 檢測字母連續字：`abc`、`XYZ`
+
+## 📦 安裝
 
 ```bash
-pnpm add qwerasd
-# 或
-npm i qwerasd
-# 或
-yarn add qwerasd
+npm install qwerasd
 ```
 
-## 快速上手
+## 🚀 快速開始
 
-### 單次判斷 API
-
-適合不需要持久狀態時使用：
+### 基本使用
 
 ```ts
-import { isQwerty, isUppercase, isLowercase, isNumber, table } from "qwerasd";
+import { isQwerty, isNumber, isUppercase, isLowercase } from "qwerasd";
 
-isQwerty("qwe"); // true（水平）
-isQwerty("qaz", false, true); // true（垂直）
-isQwerty("ewq", true); // true（反向）
+// 檢測 QWERTY 鍵盤連續字
+isQwerty("qwe"); // true
+isQwerty("asd"); // true
+isQwerty("hello"); // false
 
+// 檢測數字連續字
+isNumber("123"); // true
+isNumber("456"); // true
+isNumber("135"); // false
+
+// 檢測字母連續字
 isUppercase("ABC"); // true
-isLowercase("abc"); // true
-isNumber("1234"); // true
-
-console.log(table.qwerty); // ["qwertyuiop", "asdfghjkl", "zxcvbnm"]
+isLowercase("xyz"); // true
 ```
 
-- `isQwerty(str, incluedReversed = false, includeVertical = false)`
-  - `incluedReversed`: 是否啟用反向檢測（例如 `ewq`）
-  - `includeVertical`: 是否啟用垂直檢測（例如 `qaz`、`wsx`）
+### 進階檢測
 
-### 進階：帶狀態的檢測器
+```ts
+// 檢測垂直連續字（需要第三個參數）
+isQwerty("qaz", false, true); // true - q→a→z 垂直排列
+isQwerty("wsx", false, true); // true - w→s→x 垂直排列
 
-當你需要設定「最小連續長度」並做多次檢測時，使用 `useQwerty(length)`：
+// 檢測反向連續字（需要第二個參數）
+isQwerty("ewq", true); // true - qwe 的反向
+isNumber("321", true); // true - 123 的反向
+```
+
+### 設定最小長度檢測
+
+如果需要設定最小連續長度（比如密碼至少要有 4 個連續字符才算弱）：
 
 ```ts
 import { useQwerty } from "qwerasd";
 
-const detector = useQwerty(3); // 設定最小長度為 3
+const detector = useQwerty(4); // 最小長度設為 4
 
-detector
-  .detect("qwe") // 會重置並檢測一次，回傳 this，可鏈式調用
-  .isQwerty(); // true
+// 長度不足會返回 false
+detector.detect("qw").isConsecutive(); // false (長度只有2)
+detector.detect("qwer").isConsecutive(); // true  (長度夠且連續)
 
-detector.detect("qaz", false, true).isQwerty(); // true（垂直）
+// 可以鏈式調用
+detector.detect("abc").isLowercase(); // true
+detector.detect("1234").isNumber(); // true
 
-detector.detect("ewq", true).isQwerty(); // true（反向）
-
-// 取得各分類結果與總結果
-const results = detector.getResults();
-// results: { isQwerty, isUppercase, isLowercase, isNumber, isConsecutive }
-
-// 總結果（任一類別為 true 即 true）
-detector.isConsecutive();
+// 取得詳細結果
+const result = detector.getResults();
+// { isQwerty: true, isUppercase: false, isLowercase: false,
+//   isNumber: false, isConsecutive: true }
 ```
 
-`detect(str, incluedReversed = false, includeVertical = false)` 每次呼叫都會重置內部結果並重新檢測，回傳 `this`（支援方法鏈）。
+## 📚 API 參考
 
-### 型別
+### 基本檢測函數
 
 ```ts
-export interface DetectResult {
-  isQwerty: boolean;
-  isUppercase: boolean;
-  isLowercase: boolean;
-  isNumber: boolean;
-  // 任一分類為 true 即為 true
-  isConsecutive: boolean;
-}
+// QWERTY 鍵盤連續字檢測
+isQwerty(str, 反向檢測?, 垂直檢測?)
+
+// 字母數字連續字檢測
+isUppercase(str, 反向檢測?)   // 大寫字母 ABC, DEF...
+isLowercase(str, 反向檢測?)   // 小寫字母 abc, xyz...
+isNumber(str, 反向檢測?)      // 數字 123, 456...
 ```
 
-### 轉型調用
-
-`useQwerty` 產生的檢測器支援以下轉型：
+### 進階檢測器
 
 ```ts
+const detector = useQwerty(最小長度);
+
+detector.detect(str, 反向檢測?, 垂直檢測?)
+  .isQwerty()       // 是否為鍵盤連續字
+  .isConsecutive()  // 是否為任何類型的連續字
+  .getResults()     // 取得詳細結果
+```
+
+### 實用範例
+
+```ts
+// 檢測單個字符串是否為連續字
 const detector = useQwerty(3);
-const result = detector.detect("abc");
+detector.detect("qwe", false, true).isConsecutive(); // true
+detector.detect("abc").isConsecutive(); // true
+detector.detect("x9mK#2p").isConsecutive(); // false
 
-String(result); // "true" / "false"（toString）
-+result; // 1 / 0（valueOf）
-JSON.stringify(result); // { isQwerty, isUppercase, isLowercase, isNumber, isConsecutive }
+// 實用的密碼強度檢測
+function hasWeakPattern(password) {
+  const patterns = ["qwe", "asd", "zxc", "123", "456", "abc", "qaz"];
+  return patterns.some((pattern) => password.includes(pattern));
+}
+
+hasWeakPattern("myqwe123"); // true - 包含弱模式
+hasWeakPattern("x9mK#2p"); // false - 無弱模式
 ```
 
-## API 參考
-
-### `isQwerty(str: string, incluedReversed?: boolean, includeVertical?: boolean): boolean`
-
-- 判斷是否為 QWERTY 鍵盤連續字
-- `incluedReversed`: 是否包含反向（預設 false）
-- `includeVertical`: 是否包含垂直（預設 false）
-
-### `isUppercase(str: string, incluedReversed?: boolean): boolean`
-
-- 判斷是否為大寫字母連續字
-
-### `isLowercase(str: string, incluedReversed?: boolean): boolean`
-
-- 判斷是否為小寫字母連續字
-
-### `isNumber(str: string, incluedReversed?: boolean): boolean`
-
-- 判斷是否為數字連續字
-
-### `useQwerty(length: number)`
-
-回傳具狀態的檢測器實例，常用方法：
-
-- `detect(str, incluedReversed = false, includeVertical = false)` → this
-- `isQwerty()` / `isUppercase()` / `isLowercase()` / `isNumber()` → boolean
-- `isConsecutive()` → boolean（總結果）
-- `getResults()` → `DetectResult`
-
-### `table`
-
-鍵盤/字符表，預設包含：
-
-- `qwerty`: ["qwertyuiop", "asdfghjkl", "zxcvbnm"]
-- `uppercase`: ["ABCDEFGHIJKLMNOPQRSTUVWXYZ"]
-- `lowercase`: ["abcdefghijklmnopqrstuvwxyz"]
-- `number`: ["0123456789"]
-- `symbol`: ["`~!@#$%^&\*()\_+-[]\\;',./\""]
-
-## 測試與建置
+## 🔧 開發
 
 ```bash
-pnpm test           # 執行測試（Jest）
-pnpm run test:watch # 監看模式
-pnpm run test:coverage # 覆蓋率
-
-pnpm run build      # 產出到 dist/，包含 d.ts 型別定義
+npm test           # 運行測試
+npm run build      # 構建發布版本
 ```
 
-> 注意：發佈/建置時不會將 `test/` 編譯進 `dist/`。
-
-## 相容性
-
-- Node.js 與瀏覽器皆可使用
-- TypeScript 目標建議 `es2017` 或以上
-
-## 授權
+## 📄 授權
 
 ISC
+
+---
+
+💡 **提示**：這個工具特別適合用於密碼強度檢測，幫助識別容易被猜到的連續字符密碼。

@@ -1,8 +1,26 @@
+/**
+ * 鍵盤字符表
+ */
 export const table = {
+  /**
+   * QWERTY 鍵盤字符表
+   */
   qwerty: ["qwertyuiop", "asdfghjkl", "zxcvbnm"],
+  /**
+   * 大寫字母字符表
+   */
   uppercase: ["ABCDEFGHIJKLMNOPQRSTUVWXYZ"],
+  /**
+   * 小寫字母字符表
+   */
   lowercase: ["abcdefghijklmnopqrstuvwxyz"],
+  /**
+   * 數字字符表
+   */
   number: ["0123456789"],
+  /**
+   * 符號字符表
+   */
   symbol: ["`~!@#$%^&*()_+-[]\\;',./\""],
 };
 
@@ -147,11 +165,16 @@ export interface DetectResult {
 
 /**
  * 鍵盤連續字檢測器
+ * @param length 檢測的最小長度
  */
 class QwertyDetector {
   public results: DetectResult;
   private length: number;
 
+  /**
+   * 鍵盤連續字檢測器
+   * @param length 檢測的最小長度
+   */
   constructor(length: number) {
     this.length = length;
     this.results = {
@@ -228,22 +251,42 @@ class QwertyDetector {
     return this.results.isConsecutive;
   }
 
+  /**
+   * 判斷是否為 QWERTY 鍵盤連續字
+   * @returns 是否為 QWERTY 鍵盤連續字
+   */
   isQwerty(): boolean {
     return this.results.isQwerty;
   }
 
+  /**
+   * 判斷是否為大寫字母連續字
+   * @returns 是否為大寫字母連續字
+   */
   isUppercase(): boolean {
     return this.results.isUppercase;
   }
 
+  /**
+   * 判斷是否為小寫字母連續字
+   * @returns 是否為小寫字母連續字
+   */
   isLowercase(): boolean {
     return this.results.isLowercase;
   }
 
+  /**
+   * 判斷是否為數字連續字
+   * @returns 是否為數字連續字
+   */
   isNumber(): boolean {
     return this.results.isNumber;
   }
 
+  /**
+   * 獲取檢測結果
+   * @returns 檢測結果
+   */
   getResults(): DetectResult {
     return this.results;
   }
